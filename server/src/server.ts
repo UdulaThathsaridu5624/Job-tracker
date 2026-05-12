@@ -1,12 +1,18 @@
 import express from 'express';
+import dotenv from 'dotenv';
+import cors from 'cors';
 
+dotenv.config();
 const app = express();
+const PORT = process.env.PORT ;
+
+app.use(cors());
+app.use(express.json());
 
 app.get('/', (req, res) => {
-  res.send('Hello, World!');
+  res.send({ message: 'Job Tracker API is running' });
 });
-
-app.listen(3000, () => {
-  console.log('Server is running on port 3000');
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
 
