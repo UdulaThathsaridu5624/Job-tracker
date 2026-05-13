@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Box, Button, Callout, Card, Container, Flex, Heading, Select, Text, TextArea, TextField } from "@radix-ui/themes";
 import { createApplication } from "../api/applications.api";
+import { extractMarkdownFromClipboard } from "../lib/pasteHandler";
 import Navbar from "../components/Navbar";
 
 interface FormData {
@@ -17,7 +18,7 @@ interface FormData {
 }
 
 export default function AddApplication() {
-  const { register, handleSubmit, control, formState: { errors } } = useForm<FormData>({
+  const { register, handleSubmit, control, setValue, formState: { errors } } = useForm<FormData>({
     defaultValues: { status: "APPLIED" },
   });
   const navigate = useNavigate();
@@ -113,7 +114,19 @@ export default function AddApplication() {
                 <Flex direction="column" gap="1">
                   <Text as="label" size="2" weight="medium">Job Description</Text>
                   <Text size="1" color="gray">Paste the full job posting here — formatting will be preserved.</Text>
-                  <TextArea {...register("jobDescription")} placeholder="Paste job description here..." rows={10} size="2" />
+                  <TextArea
+                    {...register("jobDescription")}
+                    placeholder="Paste job description here..."
+                    rows={10}
+                    size="2"
+                    onPaste={(e) => {
+                      const md = extractMarkdownFromClipboard(e);
+                      if (md !== null) {
+                        e.preventDefault();
+                        setValue("jobDescription", md, { shouldDirty: true });
+                      }
+                    }}
+                  />
                 </Flex>
 
                 <Flex gap="3" justify="end">

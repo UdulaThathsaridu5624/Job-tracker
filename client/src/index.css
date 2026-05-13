@@ -11,3 +11,42 @@ body {
 #root {
   min-height: 100vh;
 }
+
+.job-description-markdown {
+  font-size: var(--font-size-2);
+  line-height: 1.7;
+  color: var(--gray-12);
+}
+
+.job-description-markdown p {
+  margin: 0 0 0.75em 0;
+}
+
+.job-description-markdown p:last-child {
+  margin-bottom: 0;
+}
+
+.job-description-markdown strong {
+  font-weight: 600;
+}
+
+.job-description-markdown em {
+  font-style: italic;
+}
+
+.job-description-markdown ul,
+.job-description-markdown ol {
+  padding-left: 1.5em;
+  margin: 0.5em 0;
+}
+
+.job-description-markdown li {
+  margin-bottom: 0.25em;
+}
+
+.job-description-markdown h1,
+.job-description-markdown h2,
+.job-description-markdown h3 {
+  font-weight: 600;
+  margin: 0.75em 0 0.4em 0;
+}
