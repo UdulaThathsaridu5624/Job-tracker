@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Theme } from "@radix-ui/themes";
 import { AuthProvider, useAuth } from "./context/AuthContext";
+import { ThemeProvider, useThemeContext } from "./context/ThemeContext";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
@@ -28,14 +29,23 @@ function AppRoutes() {
   );
 }
 
+function ThemedApp() {
+  const { appearance } = useThemeContext();
+  return (
+    <Theme accentColor="indigo" grayColor="slate" radius="medium" appearance={appearance}>
+      <AuthProvider>
+        <AppRoutes />
+      </AuthProvider>
+    </Theme>
+  );
+}
+
 export default function App() {
   return (
     <BrowserRouter>
-      <Theme accentColor="indigo" grayColor="slate" radius="medium" appearance="light">
-        <AuthProvider>
-          <AppRoutes />
-        </AuthProvider>
-      </Theme>
+      <ThemeProvider>
+        <ThemedApp />
+      </ThemeProvider>
     </BrowserRouter>
   );
 }

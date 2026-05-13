@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { Box, Card, Flex, Heading, Text, TextField, Button, Callout } from "@radix-ui/themes";
+import { Target } from "lucide-react";
 import { loginUser } from "../api/auth.api";
 import { useAuth } from "../context/AuthContext";
 
@@ -27,7 +28,30 @@ export default function Login() {
   }
 
   return (
-    <Flex align="center" justify="center" style={{ minHeight: "100vh", background: "var(--gray-2)" }}>
+    <Flex
+      align="center"
+      justify="center"
+      direction="column"
+      gap="5"
+      style={{ minHeight: "100vh", background: "var(--gray-2)" }}
+    >
+      <Flex direction="column" align="center" gap="2">
+        <Box
+          style={{
+            background: "var(--indigo-3)",
+            borderRadius: "var(--radius-3)",
+            padding: "12px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Target size={32} style={{ color: "var(--indigo-9)" }} />
+        </Box>
+        <Text weight="bold" size="5" style={{ color: "var(--indigo-9)" }}>JobTracker</Text>
+        <Text size="2" color="gray">Your personal job search command center</Text>
+      </Flex>
+
       <Box width="380px">
         <Card size="4">
           <Flex direction="column" gap="5">
