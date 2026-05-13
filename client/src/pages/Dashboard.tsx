@@ -56,7 +56,7 @@ export default function Dashboard() {
                 </Flex>
               </Card>
 
-              <Grid columns="5" gap="3">
+              <Grid columns={{ initial: "2", sm: "3", md: "5" }} gap="3">
                 {statCards.map(({ key, label, icon: Icon, color }) => (
                   <Card key={key} size="2">
                     <Flex direction="column" align="center" gap="2" py="2">

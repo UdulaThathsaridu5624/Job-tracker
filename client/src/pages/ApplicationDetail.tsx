@@ -74,7 +74,7 @@ export default function ApplicationDetail() {
             {editing ? (
               <form onSubmit={handleSubmit((data) => updateMutation.mutate(data))}>
                 <Flex direction="column" gap="4">
-                  <Flex gap="4">
+                  <Flex gap="4" className="form-row">
                     <Flex direction="column" gap="1" style={{ flex: 1 }}>
                       <Text as="label" htmlFor="jobTitle" size="2" weight="medium">Job Title</Text>
                       <TextField.Root id="jobTitle" {...register("jobTitle")} size="2" />
@@ -85,7 +85,7 @@ export default function ApplicationDetail() {
                     </Flex>
                   </Flex>
 
-                  <Flex gap="4">
+                  <Flex gap="4" className="form-row">
                     <Flex direction="column" gap="1" style={{ flex: 1 }}>
                       <Text as="label" htmlFor="location" size="2" weight="medium">Location</Text>
                       <TextField.Root id="location" {...register("location")} size="2" />
@@ -111,7 +111,7 @@ export default function ApplicationDetail() {
                     </Flex>
                   </Flex>
 
-                  <Flex gap="4">
+                  <Flex gap="4" className="form-row">
                     <Flex direction="column" gap="1" style={{ flex: 1 }}>
                       <Text as="label" htmlFor="appliedDate" size="2" weight="medium">Applied Date</Text>
                       <TextField.Root id="appliedDate" {...register("appliedDate")} type="date" size="2" />

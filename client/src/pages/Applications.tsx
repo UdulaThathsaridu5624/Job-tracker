@@ -111,7 +111,7 @@ export default function Applications() {
 
         {!isLoading && paginated.length > 0 && (
           <>
-            <Grid columns="2" gap="4" mb="5">
+            <Grid columns={{ initial: "1", sm: "2" }} gap="4" mb="5">
               {paginated.map((app: any) => (
                 <Link
                   key={app.id}

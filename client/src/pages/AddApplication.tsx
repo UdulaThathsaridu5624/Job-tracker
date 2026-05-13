@@ -74,7 +74,7 @@ export default function AddApplication() {
 
             <form onSubmit={handleSubmit(onSubmit)}>
               <Flex direction="column" gap="4">
-                <Flex gap="4">
+                <Flex gap="4" className="form-row">
                   <Flex direction="column" gap="1" style={{ flex: 1 }}>
                     <Text as="label" size="2" weight="medium">
                       Job Title *
@@ -107,7 +107,7 @@ export default function AddApplication() {
                   </Flex>
                 </Flex>
 
-                <Flex gap="4">
+                <Flex gap="4" className="form-row">
                   <Flex direction="column" gap="1" style={{ flex: 1 }}>
                     <Text as="label" size="2" weight="medium">
                       Location
@@ -149,7 +149,7 @@ export default function AddApplication() {
                   </Flex>
                 </Flex>
 
-                <Flex gap="4">
+                <Flex gap="4" className="form-row">
                   <Flex direction="column" gap="1" style={{ flex: 1 }}>
                     <Text as="label" size="2" weight="medium">
                       Applied Date *

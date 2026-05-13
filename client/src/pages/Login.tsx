@@ -33,6 +33,7 @@ export default function Login() {
       justify="center"
       direction="column"
       gap="5"
+      px="4"
       style={{ minHeight: "100vh", background: "var(--gray-2)" }}
     >
       <Flex direction="column" align="center" gap="2">
@@ -52,7 +53,7 @@ export default function Login() {
         <Text size="2" color="gray">Your personal job search command center</Text>
       </Flex>
 
-      <Box width="380px">
+      <Box style={{ width: "100%", maxWidth: "380px" }}>
         <Card size="4">
           <Flex direction="column" gap="5">
             <Flex direction="column" gap="1">

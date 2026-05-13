@@ -47,7 +47,7 @@ export default function Navbar() {
                   }}
                 >
                   <LayoutDashboard size={14} />
-                  <Text size="2" weight={isActive("/dashboard") ? "medium" : "regular"}>
+                  <Text size="2" weight={isActive("/dashboard") ? "medium" : "regular"} className="nav-link-text">
                     Dashboard
                   </Text>
                 </Flex>
@@ -68,7 +68,7 @@ export default function Navbar() {
                   }}
                 >
                   <Briefcase size={14} />
-                  <Text size="2" weight={isActive("/applications") ? "medium" : "regular"}>
+                  <Text size="2" weight={isActive("/applications") ? "medium" : "regular"} className="nav-link-text">
                     Applications
                   </Text>
                 </Flex>
@@ -93,7 +93,7 @@ export default function Navbar() {
               color="indigo"
               radius="full"
             />
-            <Text size="2" color="gray">{user?.name}</Text>
+            <Text size="2" color="gray" className="nav-user-name">{user?.name}</Text>
             <Button variant="soft" color="gray" size="2" onClick={handleLogout}>
               Logout
             </Button>
