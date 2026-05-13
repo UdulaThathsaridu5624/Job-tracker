@@ -1,22 +1,19 @@
-const colors: Record<string, string> = {
-  APPLIED: "#3b82f6",
-  INTERVIEW: "#f59e0b",
-  OFFER: "#10b981",
-  REJECTED: "#ef4444",
-  WITHDRAWN: "#6b7280",
+import { Badge } from "@radix-ui/themes";
+
+type BadgeColor = "blue" | "amber" | "green" | "red" | "gray";
+
+const colorMap: Record<string, BadgeColor> = {
+  APPLIED: "blue",
+  INTERVIEW: "amber",
+  OFFER: "green",
+  REJECTED: "red",
+  WITHDRAWN: "gray",
 };
 
-export default function StatusBadge({ status }: { status: string }) {
+export default function StatusBadge({ status }: Readonly<{ status: string }>) {
   return (
-    <span style={{
-      background: colors[status] || "#6b7280",
-      color: "white",
-      padding: "0.2rem 0.6rem",
-      borderRadius: "999px",
-      fontSize: "0.75rem",
-      fontWeight: 600,
-    }}>
+    <Badge color={colorMap[status] ?? "gray"} variant="soft" radius="full">
       {status}
-    </span>
+    </Badge>
   );
 }

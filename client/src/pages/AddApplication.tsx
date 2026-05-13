@@ -1,6 +1,7 @@
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Box, Button, Callout, Card, Container, Flex, Heading, Select, Text, TextArea, TextField } from "@radix-ui/themes";
 import { createApplication } from "../api/applications.api";
 import Navbar from "../components/Navbar";
 
@@ -15,7 +16,7 @@ interface FormData {
 }
 
 export default function AddApplication() {
-  const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
+  const { register, handleSubmit, control, formState: { errors } } = useForm<FormData>({
     defaultValues: { status: "APPLIED" },
   });
   const navigate = useNavigate();
@@ -31,54 +32,90 @@ export default function AddApplication() {
   });
 
   return (
-    <>
+    <Box style={{ minHeight: "100vh", background: "var(--gray-2)" }}>
       <Navbar />
-      <div style={{ padding: "2rem", maxWidth: "600px", margin: "0 auto" }}>
-        <h1>Add Application</h1>
-        {mutation.isError && <p style={{ color: "red" }}>{(mutation.error as any)?.response?.data?.error}</p>}
-        <form onSubmit={handleSubmit((data) => mutation.mutate(data))} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-          <div>
-            <label>Job Title *</label>
-            <input {...register("jobTitle", { required: "Required" })} style={{ display: "block", width: "100%", padding: "0.5rem", marginTop: "0.3rem" }} />
-            {errors.jobTitle && <span style={{ color: "red", fontSize: "0.8rem" }}>{errors.jobTitle.message}</span>}
-          </div>
-          <div>
-            <label>Company *</label>
-            <input {...register("company", { required: "Required" })} style={{ display: "block", width: "100%", padding: "0.5rem", marginTop: "0.3rem" }} />
-            {errors.company && <span style={{ color: "red", fontSize: "0.8rem" }}>{errors.company.message}</span>}
-          </div>
-          <div>
-            <label>Location</label>
-            <input {...register("location")} style={{ display: "block", width: "100%", padding: "0.5rem", marginTop: "0.3rem" }} />
-          </div>
-          <div>
-            <label>Status</label>
-            <select {...register("status")} style={{ display: "block", width: "100%", padding: "0.5rem", marginTop: "0.3rem" }}>
-              <option value="APPLIED">Applied</option>
-              <option value="INTERVIEW">Interview</option>
-              <option value="OFFER">Offer</option>
-              <option value="REJECTED">Rejected</option>
-              <option value="WITHDRAWN">Withdrawn</option>
-            </select>
-          </div>
-          <div>
-            <label>Applied Date *</label>
-            <input {...register("appliedDate", { required: "Required" })} type="date" style={{ display: "block", width: "100%", padding: "0.5rem", marginTop: "0.3rem" }} />
-            {errors.appliedDate && <span style={{ color: "red", fontSize: "0.8rem" }}>{errors.appliedDate.message}</span>}
-          </div>
-          <div>
-            <label>Follow Up Date</label>
-            <input {...register("followUpDate")} type="date" style={{ display: "block", width: "100%", padding: "0.5rem", marginTop: "0.3rem" }} />
-          </div>
-          <div>
-            <label>Notes</label>
-            <textarea {...register("notes")} rows={4} style={{ display: "block", width: "100%", padding: "0.5rem", marginTop: "0.3rem" }} />
-          </div>
-          <button type="submit" disabled={mutation.isPending} style={{ padding: "0.7rem", background: "#3b82f6", color: "white", border: "none", cursor: "pointer", borderRadius: "4px" }}>
-            {mutation.isPending ? "Saving..." : "Add Application"}
-          </button>
-        </form>
-      </div>
-    </>
+      <Container size="2" px="4" py="7">
+        <Card size="4">
+          <Flex direction="column" gap="5">
+            <Heading size="6">Add Application</Heading>
+
+            {mutation.isError && (
+              <Callout.Root color="red" size="1">
+                <Callout.Text>{(mutation.error as any)?.response?.data?.error || "Something went wrong"}</Callout.Text>
+              </Callout.Root>
+            )}
+
+            <form onSubmit={handleSubmit((data) => mutation.mutate(data))}>
+              <Flex direction="column" gap="4">
+                <Flex gap="4">
+                  <Flex direction="column" gap="1" style={{ flex: 1 }}>
+                    <Text as="label" size="2" weight="medium">Job Title *</Text>
+                    <TextField.Root {...register("jobTitle", { required: "Required" })} placeholder="Software Engineer" size="2" />
+                    {errors.jobTitle && <Text size="1" color="red">{errors.jobTitle.message}</Text>}
+                  </Flex>
+                  <Flex direction="column" gap="1" style={{ flex: 1 }}>
+                    <Text as="label" size="2" weight="medium">Company *</Text>
+                    <TextField.Root {...register("company", { required: "Required" })} placeholder="Acme Corp" size="2" />
+                    {errors.company && <Text size="1" color="red">{errors.company.message}</Text>}
+                  </Flex>
+                </Flex>
+
+                <Flex gap="4">
+                  <Flex direction="column" gap="1" style={{ flex: 1 }}>
+                    <Text as="label" size="2" weight="medium">Location</Text>
+                    <TextField.Root {...register("location")} placeholder="Remote" size="2" />
+                  </Flex>
+                  <Flex direction="column" gap="1" style={{ flex: 1 }}>
+                    <Text as="label" size="2" weight="medium">Status</Text>
+                    <Controller
+                      control={control}
+                      name="status"
+                      render={({ field }) => (
+                        <Select.Root value={field.value} onValueChange={field.onChange} size="2">
+                          <Select.Trigger style={{ width: "100%" }} />
+                          <Select.Content>
+                            <Select.Item value="APPLIED">Applied</Select.Item>
+                            <Select.Item value="INTERVIEW">Interview</Select.Item>
+                            <Select.Item value="OFFER">Offer</Select.Item>
+                            <Select.Item value="REJECTED">Rejected</Select.Item>
+                            <Select.Item value="WITHDRAWN">Withdrawn</Select.Item>
+                          </Select.Content>
+                        </Select.Root>
+                      )}
+                    />
+                  </Flex>
+                </Flex>
+
+                <Flex gap="4">
+                  <Flex direction="column" gap="1" style={{ flex: 1 }}>
+                    <Text as="label" size="2" weight="medium">Applied Date *</Text>
+                    <TextField.Root {...register("appliedDate", { required: "Required" })} type="date" size="2" />
+                    {errors.appliedDate && <Text size="1" color="red">{errors.appliedDate.message}</Text>}
+                  </Flex>
+                  <Flex direction="column" gap="1" style={{ flex: 1 }}>
+                    <Text as="label" size="2" weight="medium">Follow Up Date</Text>
+                    <TextField.Root {...register("followUpDate")} type="date" size="2" />
+                  </Flex>
+                </Flex>
+
+                <Flex direction="column" gap="1">
+                  <Text as="label" size="2" weight="medium">Notes</Text>
+                  <TextArea {...register("notes")} placeholder="Any notes about this application..." rows={4} size="2" />
+                </Flex>
+
+                <Flex gap="3" justify="end">
+                  <Button type="button" variant="soft" color="gray" onClick={() => navigate("/applications")}>
+                    Cancel
+                  </Button>
+                  <Button type="submit" disabled={mutation.isPending}>
+                    {mutation.isPending ? "Saving..." : "Add Application"}
+                  </Button>
+                </Flex>
+              </Flex>
+            </form>
+          </Flex>
+        </Card>
+      </Container>
+    </Box>
   );
 }

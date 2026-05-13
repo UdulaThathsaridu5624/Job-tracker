@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
+import { Box, Button, Container, Flex, Heading, Spinner, Table, Text } from "@radix-ui/themes";
 import { getApplications } from "../api/applications.api";
 import Navbar from "../components/Navbar";
 import StatusBadge from "../components/StatusBadge";
@@ -11,45 +12,52 @@ export default function Applications() {
   });
 
   return (
-    <>
+    <Box style={{ minHeight: "100vh", background: "var(--gray-2)" }}>
       <Navbar />
-      <div style={{ padding: "2rem", maxWidth: "900px", margin: "0 auto" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
-          <h1>Applications</h1>
-          <Link to="/applications/new" style={{ background: "#3b82f6", color: "white", padding: "0.5rem 1rem", borderRadius: "4px", textDecoration: "none" }}>
-            + Add New
+      <Container size="3" px="4" py="7">
+        <Flex justify="between" align="center" mb="5">
+          <Heading size="6">Applications</Heading>
+          <Link to="/applications/new" style={{ textDecoration: "none" }}>
+            <Button size="2">+ Add New</Button>
           </Link>
-        </div>
+        </Flex>
 
-        {isLoading ? (
-          <p>Loading...</p>
-        ) : applications.length === 0 ? (
-          <p style={{ opacity: 0.6 }}>No applications yet. Add your first one!</p>
-        ) : (
-          <table style={{ width: "100%", borderCollapse: "collapse" }}>
-            <thead>
-              <tr style={{ borderBottom: "2px solid #eee", textAlign: "left" }}>
-                <th style={{ padding: "0.75rem" }}>Job Title</th>
-                <th style={{ padding: "0.75rem" }}>Company</th>
-                <th style={{ padding: "0.75rem" }}>Status</th>
-                <th style={{ padding: "0.75rem" }}>Applied</th>
-              </tr>
-            </thead>
-            <tbody>
-              {applications.map((app: any) => (
-                <tr key={app.id} style={{ borderBottom: "1px solid #eee" }}>
-                  <td style={{ padding: "0.75rem" }}>
-                    <Link to={`/applications/${app.id}`} style={{ color: "#3b82f6" }}>{app.jobTitle}</Link>
-                  </td>
-                  <td style={{ padding: "0.75rem" }}>{app.company}</td>
-                  <td style={{ padding: "0.75rem" }}><StatusBadge status={app.status} /></td>
-                  <td style={{ padding: "0.75rem" }}>{new Date(app.appliedDate).toLocaleDateString()}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        {isLoading && <Flex justify="center" py="9"><Spinner size="3" /></Flex>}
+
+        {!isLoading && applications.length === 0 && (
+          <Flex direction="column" align="center" gap="2" py="9">
+            <Text size="4" weight="medium">No applications yet</Text>
+            <Text color="gray" size="2">Add your first job application to get started.</Text>
+          </Flex>
         )}
-      </div>
-    </>
+
+        {!isLoading && applications.length > 0 && (
+          <Table.Root variant="surface">
+            <Table.Header>
+              <Table.Row>
+                <Table.ColumnHeaderCell>Job Title</Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell>Company</Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell>Status</Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell>Applied</Table.ColumnHeaderCell>
+              </Table.Row>
+            </Table.Header>
+            <Table.Body>
+              {applications.map((app: any) => (
+                <Table.Row key={app.id}>
+                  <Table.Cell>
+                    <Link to={`/applications/${app.id}`} style={{ color: "var(--indigo-9)", textDecoration: "none", fontWeight: 500 }}>
+                      {app.jobTitle}
+                    </Link>
+                  </Table.Cell>
+                  <Table.Cell>{app.company}</Table.Cell>
+                  <Table.Cell><StatusBadge status={app.status} /></Table.Cell>
+                  <Table.Cell>{new Date(app.appliedDate).toLocaleDateString()}</Table.Cell>
+                </Table.Row>
+              ))}
+            </Table.Body>
+          </Table.Root>
+        )}
+      </Container>
+    </Box>
   );
 }

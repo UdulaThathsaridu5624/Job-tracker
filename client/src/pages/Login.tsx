@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
+import { Box, Card, Flex, Heading, Text, TextField, Button, Callout } from "@radix-ui/themes";
 import { loginUser } from "../api/auth.api";
 import { useAuth } from "../context/AuthContext";
 
@@ -26,25 +27,58 @@ export default function Login() {
   }
 
   return (
-    <div style={{ maxWidth: "400px", margin: "5rem auto", padding: "2rem" }}>
-      <h1>Login</h1>
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      <form onSubmit={handleSubmit(onSubmit)} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-        <div>
-          <label>Email</label>
-          <input {...register("email", { required: "Email is required" })} type="email" style={{ display: "block", width: "100%", padding: "0.5rem", marginTop: "0.3rem" }} />
-          {errors.email && <span style={{ color: "red", fontSize: "0.8rem" }}>{errors.email.message}</span>}
-        </div>
-        <div>
-          <label>Password</label>
-          <input {...register("password", { required: "Password is required" })} type="password" style={{ display: "block", width: "100%", padding: "0.5rem", marginTop: "0.3rem" }} />
-          {errors.password && <span style={{ color: "red", fontSize: "0.8rem" }}>{errors.password.message}</span>}
-        </div>
-        <button type="submit" style={{ padding: "0.7rem", background: "#3b82f6", color: "white", border: "none", cursor: "pointer", borderRadius: "4px" }}>
-          Login
-        </button>
-      </form>
-      <p>Don't have an account? <Link to="/register">Register</Link></p>
-    </div>
+    <Flex align="center" justify="center" style={{ minHeight: "100vh", background: "var(--gray-2)" }}>
+      <Box width="380px">
+        <Card size="4">
+          <Flex direction="column" gap="5">
+            <Flex direction="column" gap="1">
+              <Heading size="6">Welcome back</Heading>
+              <Text size="2" color="gray">Sign in to your account</Text>
+            </Flex>
+
+            {error && (
+              <Callout.Root color="red" size="1">
+                <Callout.Text>{error}</Callout.Text>
+              </Callout.Root>
+            )}
+
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <Flex direction="column" gap="4">
+                <Flex direction="column" gap="1">
+                  <Text as="label" size="2" weight="medium">Email</Text>
+                  <TextField.Root
+                    {...register("email", { required: "Email is required" })}
+                    type="email"
+                    placeholder="you@example.com"
+                    size="2"
+                  />
+                  {errors.email && <Text size="1" color="red">{errors.email.message}</Text>}
+                </Flex>
+
+                <Flex direction="column" gap="1">
+                  <Text as="label" size="2" weight="medium">Password</Text>
+                  <TextField.Root
+                    {...register("password", { required: "Password is required" })}
+                    type="password"
+                    placeholder="••••••••"
+                    size="2"
+                  />
+                  {errors.password && <Text size="1" color="red">{errors.password.message}</Text>}
+                </Flex>
+
+                <Button type="submit" size="2">Sign in</Button>
+              </Flex>
+            </form>
+
+            <Text size="2" color="gray" align="center">
+              Don't have an account?{" "}
+              <Link to="/register" style={{ color: "var(--indigo-9)", textDecoration: "none", fontWeight: 500 }}>
+                Register
+              </Link>
+            </Text>
+          </Flex>
+        </Card>
+      </Box>
+    </Flex>
   );
 }

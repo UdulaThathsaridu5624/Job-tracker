@@ -1,4 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
+import { Box, Flex, Text, Button, Container, Avatar } from "@radix-ui/themes";
 import { useAuth } from "../context/AuthContext";
 
 export default function Navbar() {
@@ -11,18 +12,37 @@ export default function Navbar() {
   }
 
   return (
-    <nav style={{ padding: "1rem 2rem", background: "#1e1e2e", color: "white", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-      <div style={{ display: "flex", gap: "1.5rem" }}>
-        <Link to="/dashboard" style={{ color: "white", textDecoration: "none" }}>Dashboard</Link>
-        <Link to="/applications" style={{ color: "white", textDecoration: "none" }}>Applications</Link>
-        <Link to="/applications/new" style={{ color: "white", textDecoration: "none" }}>+ Add</Link>
-      </div>
-      <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-        <span style={{ fontSize: "0.9rem", opacity: 0.7 }}>{user?.name}</span>
-        <button onClick={handleLogout} style={{ background: "transparent", border: "1px solid #666", color: "white", padding: "0.3rem 0.8rem", cursor: "pointer", borderRadius: "4px" }}>
-          Logout
-        </button>
-      </div>
-    </nav>
+    <Box style={{ background: "var(--gray-1)", borderBottom: "1px solid var(--gray-4)" }}>
+      <Container size="3">
+        <Flex justify="between" align="center" py="4" px="4">
+          <Flex gap="6" align="center">
+            <Text weight="bold" size="4" style={{ color: "var(--indigo-9)" }}>
+              JobTracker
+            </Text>
+            <Flex gap="4">
+              <Link to="/dashboard" style={{ textDecoration: "none" }}>
+                <Text size="2" color="gray" style={{ cursor: "pointer" }}>Dashboard</Text>
+              </Link>
+              <Link to="/applications" style={{ textDecoration: "none" }}>
+                <Text size="2" color="gray" style={{ cursor: "pointer" }}>Applications</Text>
+              </Link>
+            </Flex>
+          </Flex>
+
+          <Flex gap="3" align="center">
+            <Avatar
+              size="2"
+              fallback={user?.name?.[0]?.toUpperCase() ?? "U"}
+              color="indigo"
+              radius="full"
+            />
+            <Text size="2" color="gray">{user?.name}</Text>
+            <Button variant="soft" color="gray" size="2" onClick={handleLogout}>
+              Logout
+            </Button>
+          </Flex>
+        </Flex>
+      </Container>
+    </Box>
   );
 }

@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
+import { AlertDialog, Box, Button, Card, Container, Flex, Heading, Select, Separator, Spinner, Text, TextArea, TextField } from "@radix-ui/themes";
 import { getApplication, updateApplication, deleteApplication } from "../api/applications.api";
 import Navbar from "../components/Navbar";
 import StatusBadge from "../components/StatusBadge";
@@ -14,10 +15,10 @@ export default function ApplicationDetail() {
 
   const { data: application, isLoading } = useQuery({
     queryKey: ["application", id],
-    queryFn: () => getApplication(id!),
+    queryFn: () => getApplication(id as string),
   });
 
-  const { register, handleSubmit, reset } = useForm();
+  const { register, handleSubmit, control, reset } = useForm();
 
   useEffect(() => {
     if (application) {
@@ -30,7 +31,7 @@ export default function ApplicationDetail() {
   }, [application, reset]);
 
   const updateMutation = useMutation({
-    mutationFn: (data: any) => updateApplication(id!, data),
+    mutationFn: (data: any) => updateApplication(id as string, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["application", id] });
       queryClient.invalidateQueries({ queryKey: ["applications"] });
@@ -39,7 +40,7 @@ export default function ApplicationDetail() {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: () => deleteApplication(id!),
+    mutationFn: () => deleteApplication(id as string),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["applications"] });
       queryClient.invalidateQueries({ queryKey: ["stats"] });
@@ -47,89 +48,140 @@ export default function ApplicationDetail() {
     },
   });
 
-  if (isLoading) return <><Navbar /><p style={{ padding: "2rem" }}>Loading...</p></>;
-  if (!application) return <><Navbar /><p style={{ padding: "2rem" }}>Not found</p></>;
+  if (isLoading) return <><Navbar /><Flex justify="center" py="9"><Spinner size="3" /></Flex></>;
+  if (!application) return <><Navbar /><Flex justify="center" py="9"><Text color="gray">Application not found.</Text></Flex></>;
 
   return (
-    <>
+    <Box style={{ minHeight: "100vh", background: "var(--gray-2)" }}>
       <Navbar />
-      <div style={{ padding: "2rem", maxWidth: "600px", margin: "0 auto" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start", marginBottom: "1.5rem" }}>
-          <div>
-            <h1 style={{ marginBottom: "0.3rem" }}>{application.jobTitle}</h1>
-            <p style={{ opacity: 0.7, margin: 0 }}>
-              {application.company}{application.location && ` · ${application.location}`}
-            </p>
-          </div>
-          <StatusBadge status={application.status} />
-        </div>
+      <Container size="2" px="4" py="7">
+        <Card size="4">
+          <Flex direction="column" gap="5">
+            <Flex justify="between" align="start">
+              <Flex direction="column" gap="1">
+                <Heading size="6">{application.jobTitle}</Heading>
+                <Text color="gray" size="2">
+                  {application.company}{application.location && ` · ${application.location}`}
+                </Text>
+              </Flex>
+              <StatusBadge status={application.status} />
+            </Flex>
 
-        {!editing ? (
-          <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-            <p><strong>Applied:</strong> {new Date(application.appliedDate).toLocaleDateString()}</p>
-            {application.followUpDate && (
-              <p><strong>Follow Up:</strong> {new Date(application.followUpDate).toLocaleDateString()}</p>
+            <Separator size="4" />
+
+            {editing ? (
+              <form onSubmit={handleSubmit((data) => updateMutation.mutate(data))}>
+                <Flex direction="column" gap="4">
+                  <Flex gap="4">
+                    <Flex direction="column" gap="1" style={{ flex: 1 }}>
+                      <Text as="label" htmlFor="jobTitle" size="2" weight="medium">Job Title</Text>
+                      <TextField.Root id="jobTitle" {...register("jobTitle")} size="2" />
+                    </Flex>
+                    <Flex direction="column" gap="1" style={{ flex: 1 }}>
+                      <Text as="label" htmlFor="company" size="2" weight="medium">Company</Text>
+                      <TextField.Root id="company" {...register("company")} size="2" />
+                    </Flex>
+                  </Flex>
+
+                  <Flex gap="4">
+                    <Flex direction="column" gap="1" style={{ flex: 1 }}>
+                      <Text as="label" htmlFor="location" size="2" weight="medium">Location</Text>
+                      <TextField.Root id="location" {...register("location")} size="2" />
+                    </Flex>
+                    <Flex direction="column" gap="1" style={{ flex: 1 }}>
+                      <Text as="label" htmlFor="status" size="2" weight="medium">Status</Text>
+                      <Controller
+                        control={control}
+                        name="status"
+                        render={({ field }) => (
+                          <Select.Root value={field.value} onValueChange={field.onChange} size="2">
+                            <Select.Trigger id="status" style={{ width: "100%" }} />
+                            <Select.Content>
+                              <Select.Item value="APPLIED">Applied</Select.Item>
+                              <Select.Item value="INTERVIEW">Interview</Select.Item>
+                              <Select.Item value="OFFER">Offer</Select.Item>
+                              <Select.Item value="REJECTED">Rejected</Select.Item>
+                              <Select.Item value="WITHDRAWN">Withdrawn</Select.Item>
+                            </Select.Content>
+                          </Select.Root>
+                        )}
+                      />
+                    </Flex>
+                  </Flex>
+
+                  <Flex gap="4">
+                    <Flex direction="column" gap="1" style={{ flex: 1 }}>
+                      <Text as="label" htmlFor="appliedDate" size="2" weight="medium">Applied Date</Text>
+                      <TextField.Root id="appliedDate" {...register("appliedDate")} type="date" size="2" />
+                    </Flex>
+                    <Flex direction="column" gap="1" style={{ flex: 1 }}>
+                      <Text as="label" htmlFor="followUpDate" size="2" weight="medium">Follow Up Date</Text>
+                      <TextField.Root id="followUpDate" {...register("followUpDate")} type="date" size="2" />
+                    </Flex>
+                  </Flex>
+
+                  <Flex direction="column" gap="1">
+                    <Text as="label" htmlFor="notes" size="2" weight="medium">Notes</Text>
+                    <TextArea id="notes" {...register("notes")} rows={4} size="2" />
+                  </Flex>
+
+                  <Flex gap="3" justify="end">
+                    <Button type="button" variant="soft" color="gray" onClick={() => setEditing(false)}>Cancel</Button>
+                    <Button type="submit" disabled={updateMutation.isPending}>
+                      {updateMutation.isPending ? "Saving..." : "Save changes"}
+                    </Button>
+                  </Flex>
+                </Flex>
+              </form>
+            ) : (
+              <Flex direction="column" gap="4">
+                <Flex gap="6">
+                  <Flex direction="column" gap="1">
+                    <Text size="1" color="gray" weight="medium">APPLIED</Text>
+                    <Text size="2">{new Date(application.appliedDate).toLocaleDateString()}</Text>
+                  </Flex>
+                  {application.followUpDate && (
+                    <Flex direction="column" gap="1">
+                      <Text size="1" color="gray" weight="medium">FOLLOW UP</Text>
+                      <Text size="2">{new Date(application.followUpDate).toLocaleDateString()}</Text>
+                    </Flex>
+                  )}
+                </Flex>
+
+                {application.notes && (
+                  <Flex direction="column" gap="1">
+                    <Text size="1" color="gray" weight="medium">NOTES</Text>
+                    <Text size="2">{application.notes}</Text>
+                  </Flex>
+                )}
+
+                <Flex gap="3" justify="end" pt="2">
+                  <AlertDialog.Root>
+                    <AlertDialog.Trigger>
+                      <Button variant="soft" color="red">Delete</Button>
+                    </AlertDialog.Trigger>
+                    <AlertDialog.Content>
+                      <AlertDialog.Title>Delete application?</AlertDialog.Title>
+                      <AlertDialog.Description>
+                        This will permanently delete your application to {application.company}. This cannot be undone.
+                      </AlertDialog.Description>
+                      <Flex gap="3" justify="end" mt="4">
+                        <AlertDialog.Cancel><Button variant="soft" color="gray">Cancel</Button></AlertDialog.Cancel>
+                        <AlertDialog.Action>
+                          <Button color="red" onClick={() => deleteMutation.mutate()} disabled={deleteMutation.isPending}>
+                            {deleteMutation.isPending ? "Deleting..." : "Delete"}
+                          </Button>
+                        </AlertDialog.Action>
+                      </Flex>
+                    </AlertDialog.Content>
+                  </AlertDialog.Root>
+                  <Button onClick={() => setEditing(true)}>Edit</Button>
+                </Flex>
+              </Flex>
             )}
-            {application.notes && <p><strong>Notes:</strong> {application.notes}</p>}
-            <div style={{ display: "flex", gap: "1rem", marginTop: "1rem" }}>
-              <button onClick={() => setEditing(true)} style={{ padding: "0.5rem 1rem", background: "#3b82f6", color: "white", border: "none", cursor: "pointer", borderRadius: "4px" }}>
-                Edit
-              </button>
-              <button
-                onClick={() => { if (confirm("Delete this application?")) deleteMutation.mutate(); }}
-                style={{ padding: "0.5rem 1rem", background: "#ef4444", color: "white", border: "none", cursor: "pointer", borderRadius: "4px" }}
-              >
-                Delete
-              </button>
-            </div>
-          </div>
-        ) : (
-          <form onSubmit={handleSubmit((data) => updateMutation.mutate(data))} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-            <div>
-              <label>Job Title</label>
-              <input {...register("jobTitle")} style={{ display: "block", width: "100%", padding: "0.5rem", marginTop: "0.3rem" }} />
-            </div>
-            <div>
-              <label>Company</label>
-              <input {...register("company")} style={{ display: "block", width: "100%", padding: "0.5rem", marginTop: "0.3rem" }} />
-            </div>
-            <div>
-              <label>Location</label>
-              <input {...register("location")} style={{ display: "block", width: "100%", padding: "0.5rem", marginTop: "0.3rem" }} />
-            </div>
-            <div>
-              <label>Status</label>
-              <select {...register("status")} style={{ display: "block", width: "100%", padding: "0.5rem", marginTop: "0.3rem" }}>
-                <option value="APPLIED">Applied</option>
-                <option value="INTERVIEW">Interview</option>
-                <option value="OFFER">Offer</option>
-                <option value="REJECTED">Rejected</option>
-                <option value="WITHDRAWN">Withdrawn</option>
-              </select>
-            </div>
-            <div>
-              <label>Applied Date</label>
-              <input {...register("appliedDate")} type="date" style={{ display: "block", width: "100%", padding: "0.5rem", marginTop: "0.3rem" }} />
-            </div>
-            <div>
-              <label>Follow Up Date</label>
-              <input {...register("followUpDate")} type="date" style={{ display: "block", width: "100%", padding: "0.5rem", marginTop: "0.3rem" }} />
-            </div>
-            <div>
-              <label>Notes</label>
-              <textarea {...register("notes")} rows={4} style={{ display: "block", width: "100%", padding: "0.5rem", marginTop: "0.3rem" }} />
-            </div>
-            <div style={{ display: "flex", gap: "1rem" }}>
-              <button type="submit" disabled={updateMutation.isPending} style={{ padding: "0.5rem 1rem", background: "#3b82f6", color: "white", border: "none", cursor: "pointer", borderRadius: "4px" }}>
-                {updateMutation.isPending ? "Saving..." : "Save"}
-              </button>
-              <button type="button" onClick={() => setEditing(false)} style={{ padding: "0.5rem 1rem", background: "#6b7280", color: "white", border: "none", cursor: "pointer", borderRadius: "4px" }}>
-                Cancel
-              </button>
-            </div>
-          </form>
-        )}
-      </div>
-    </>
+          </Flex>
+        </Card>
+      </Container>
+    </Box>
   );
 }
