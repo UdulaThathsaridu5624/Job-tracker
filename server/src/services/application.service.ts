@@ -35,11 +35,17 @@ export async function updateApplication(id: string, userId: string, data: Partia
   location: string;
   status: Status;
   notes: string;
+  jobDescription: string;
   appliedDate: Date;
   followUpDate: Date;
 }>) {
   await getApplicationById(id, userId);
-  return prisma.application.update({ where: { id }, data });
+  const { jobTitle, company, location, status, notes, jobDescription, appliedDate, followUpDate } = data;
+  const updateData = Object.fromEntries(
+    Object.entries({ jobTitle, company, location, status, notes, jobDescription, appliedDate, followUpDate })
+      .filter(([, v]) => v !== undefined)
+  );
+  return prisma.application.update({ where: { id }, data: updateData });
 }
 
 export async function deleteApplication(id: string, userId: string) {

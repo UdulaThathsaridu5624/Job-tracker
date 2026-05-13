@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm, Controller } from "react-hook-form";
-import { AlertDialog, Box, Button, Card, Container, Flex, Heading, Select, Separator, Spinner, Text, TextArea, TextField } from "@radix-ui/themes";
+import { AlertDialog, Box, Button, Card, Container, Flex, Heading, ScrollArea, Select, Separator, Spinner, Text, TextArea, TextField } from "@radix-ui/themes";
 import { getApplication, updateApplication, deleteApplication } from "../api/applications.api";
 import Navbar from "../components/Navbar";
 import StatusBadge from "../components/StatusBadge";
@@ -122,7 +122,12 @@ export default function ApplicationDetail() {
 
                   <Flex direction="column" gap="1">
                     <Text as="label" htmlFor="notes" size="2" weight="medium">Notes</Text>
-                    <TextArea id="notes" {...register("notes")} rows={4} size="2" />
+                    <TextArea id="notes" {...register("notes")} rows={3} size="2" />
+                  </Flex>
+
+                  <Flex direction="column" gap="1">
+                    <Text as="label" htmlFor="jobDescription" size="2" weight="medium">Job Description</Text>
+                    <TextArea id="jobDescription" {...register("jobDescription")} rows={10} size="2" />
                   </Flex>
 
                   <Flex gap="3" justify="end">
@@ -152,6 +157,17 @@ export default function ApplicationDetail() {
                   <Flex direction="column" gap="1">
                     <Text size="1" color="gray" weight="medium">NOTES</Text>
                     <Text size="2">{application.notes}</Text>
+                  </Flex>
+                )}
+
+                {application.jobDescription && (
+                  <Flex direction="column" gap="2">
+                    <Text size="1" color="gray" weight="medium">JOB DESCRIPTION</Text>
+                    <ScrollArea style={{ maxHeight: "400px", background: "var(--gray-2)", borderRadius: "var(--radius-3)", padding: "16px" }}>
+                      <Text size="2" style={{ whiteSpace: "pre-wrap", lineHeight: "1.7", display: "block" }}>
+                        {application.jobDescription}
+                      </Text>
+                    </ScrollArea>
                   </Flex>
                 )}
 

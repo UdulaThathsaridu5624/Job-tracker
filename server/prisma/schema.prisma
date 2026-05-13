@@ -37,8 +37,9 @@ model Application {
   company      String
   location     String?
   status       Status    @default(APPLIED)
-  notes        String?
-  appliedDate  DateTime
+  notes          String?
+  jobDescription String?
+  appliedDate    DateTime
   followUpDate DateTime?
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt

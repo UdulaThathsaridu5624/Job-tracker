@@ -13,6 +13,7 @@ interface FormData {
   appliedDate: string;
   followUpDate?: string;
   notes?: string;
+  jobDescription?: string;
 }
 
 export default function AddApplication() {
@@ -31,6 +32,10 @@ export default function AddApplication() {
     },
   });
 
+  function onSubmit(data: FormData) {
+    mutation.mutate(data);
+  }
+
   return (
     <Box style={{ minHeight: "100vh", background: "var(--gray-2)" }}>
       <Navbar />
@@ -41,11 +46,13 @@ export default function AddApplication() {
 
             {mutation.isError && (
               <Callout.Root color="red" size="1">
-                <Callout.Text>{(mutation.error as any)?.response?.data?.error || "Something went wrong"}</Callout.Text>
+                <Callout.Text>
+                  {(mutation.error as any)?.response?.data?.error || "Something went wrong"}
+                </Callout.Text>
               </Callout.Root>
             )}
 
-            <form onSubmit={handleSubmit((data) => mutation.mutate(data))}>
+            <form onSubmit={handleSubmit(onSubmit)}>
               <Flex direction="column" gap="4">
                 <Flex gap="4">
                   <Flex direction="column" gap="1" style={{ flex: 1 }}>
@@ -100,7 +107,13 @@ export default function AddApplication() {
 
                 <Flex direction="column" gap="1">
                   <Text as="label" size="2" weight="medium">Notes</Text>
-                  <TextArea {...register("notes")} placeholder="Any notes about this application..." rows={4} size="2" />
+                  <TextArea {...register("notes")} placeholder="Any personal notes about this application..." rows={3} size="2" />
+                </Flex>
+
+                <Flex direction="column" gap="1">
+                  <Text as="label" size="2" weight="medium">Job Description</Text>
+                  <Text size="1" color="gray">Paste the full job posting here — formatting will be preserved.</Text>
+                  <TextArea {...register("jobDescription")} placeholder="Paste job description here..." rows={10} size="2" />
                 </Flex>
 
                 <Flex gap="3" justify="end">
